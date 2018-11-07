@@ -18,6 +18,7 @@ using namespace std;
 #include <iostream>
 #include <stdio.h>
 #include <freeglut.h>
+#include <fstream>    
 
 #pragma warning (disable : 4996)
 

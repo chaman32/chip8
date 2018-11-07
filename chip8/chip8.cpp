@@ -78,6 +78,29 @@ bool chip8::loadApplication(const char * filename)
 {
 	init(); //http://www.cplusplus.com/doc/tutorial/files/
 
+	ifstream readFileGame;
+
+	readFileGame.open(filename, ifstream::in);
+
+	if (!readFileGame.good())
+	{
+		cout << "File error" << endl;
+		return false;
+	}
+
+	readFileGame.seekg(0, ios_base::end);
+	long fSize = readFileGame.tellg();
+	readFileGame.seekg(0);
+
+	cout << "File size " << fSize << endl;
+
+
+
+	readFileGame.close();
+
+
+
+
 	cout << "Loading: %s\n" << filename << endl;
 
 	// Open file
