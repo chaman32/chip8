@@ -34,6 +34,42 @@ chip8::~chip8()
 	// empty
 }
 
+
+void chip8::emulateCycle()
+{
+	// Fetch opcode
+	opcode = memory[pc] << 8 | memory[pc + 1];
+
+	// Decode opcode
+	switch (opcode & 0xF000)
+	{
+		// Some opcodes //
+
+	case 0xA000: // ANNN: Sets I to the address NNN
+	  // Execute opcode
+		I = opcode & 0x0FFF;
+		pc += 2;
+		break;
+
+		// More opcodes //
+
+	default:
+		cout << "Unknown opcode: " << opcode << endl;
+
+	}
+
+	// Update timers
+	if (delay_timer > 0)
+		--delay_timer;
+
+	if (sound_timer > 0)
+	{
+		if (sound_timer == 1)
+			printf("BEEP!\n");
+		--sound_timer;
+	}
+}
+
 void chip8::init()
 {
 
@@ -94,56 +130,29 @@ bool chip8::loadApplication(const char * filename)
 
 	cout << "File size " << fSize << endl;
 
+	char* buffer = (char*)malloc(sizeof(char) * fSize);
+	if (buffer == NULL)
+	{
+		cout << "Memory error" << endl;
+		return false;
+	}
 
+	readFileGame.read(buffer, fSize);
 
-	readFileGame.close();
-
-
-
+	cout << "Byte: " << readFileGame.gcount() << endl;
 
 	cout << "Loading: %s\n" << filename << endl;
 
-	// Open file
-	FILE * pFile = fopen(filename, "rb");
-	if (pFile == NULL)
-	{
-		fputs("File error", stderr);
-		return false;
-	}
-
-	// Check file size
-	fseek(pFile, 0, SEEK_END);
-	long lSize = ftell(pFile);
-	rewind(pFile);
-	printf("Filesize: %d\n", (int)lSize);
-
-	// Allocate memory to contain the whole file
-	char * buffer = (char*)malloc(sizeof(char) * lSize);
-	if (buffer == NULL)
-	{
-		fputs("Memory error", stderr);
-		return false;
-	}
-
-	// Copy the file into the buffer
-	size_t result = fread(buffer, 1, lSize, pFile);
-	if (result != lSize)
-	{
-		fputs("Reading error", stderr);
-		return false;
-	}
-
 	// Copy buffer to Chip8 memory
-	if ((4096 - 512) > lSize)
+	if ((4096 - 512) > fSize)
 	{
-		for (int i = 0; i < lSize; ++i)
+		for (int i = 0; i < fSize; ++i)
 			memory[i + 512] = buffer[i];
 	}
 	else
-		printf("Error: ROM too big for memory");
+		cout<< "Error: ROM too big for memory" << endl;
 
-	// Close file, free buffer
-	fclose(pFile);
+	readFileGame.close();
 	free(buffer);
 
 	return true;
