@@ -130,7 +130,8 @@ bool chip8::loadApplication(const char * filename)
 
 	cout << "File size " << fSize << endl;
 
-	char* buffer = (char*)malloc(sizeof(char) * fSize);
+	auto buffer = new char[fSize];
+ 
 	if (buffer == NULL)
 	{
 		cout << "Memory error" << endl;
@@ -153,7 +154,7 @@ bool chip8::loadApplication(const char * filename)
 		cout<< "Error: ROM too big for memory" << endl;
 
 	readFileGame.close();
-	free(buffer);
+	delete buffer;
 
 	return true;
 }
