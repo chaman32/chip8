@@ -24,5 +24,20 @@ int main(int argc, char **argv)
 		return 1;
 
 
+	// Emulation loop
+	for (;;)
+	{
+		// Emulate one cycle
+		chip8App.emulateCycle();
+
+		// If the draw flag is set, update the screen
+		//if (chip8App.drawFlag)
+			//drawGraphics();
+
+		// Store key press state (Press and Release)
+		//chip8App.setKeys();
+	}
+
+
 	return 0;
 }
